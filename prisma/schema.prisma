@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  bio       String?
+  image     String?
+  // Note: createdAt is missing in the actual database
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("User")
+}
+
+model Book {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  image       String?
+  createdAt   DateTime @default(now())
+  // Note: updatedAt is missing in the actual database
+
+  @@map("Book")
+}
+
+model Blog {
+  id        String   @id @default(cuid())
+  title     String
+  summary   String
+  content   String
+  image     String?
+  createdAt DateTime @default(now())
+  // Note: updatedAt is missing in the actual database
+
+  @@map("Blog")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("Message")
+}

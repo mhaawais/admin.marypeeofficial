@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
@@ -8,17 +9,44 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.9.0",
+    "@cloudinary/react": "^1.14.1",
+    "@cloudinary/url-gen": "^1.21.0",
+    "@headlessui/react": "^2.2.2",
+    "@heroicons/react": "^2.2.0",
+    "@prisma/client": "^6.6.0",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.6.0",
+    "formidable": "^3.5.4",
+    "lucide-react": "^0.503.0",
+    "multer": "^1.4.5-lts.2",
+    "next": "^15.3.1",
+    "next-auth": "^4.24.11",
+    "ra-data-json-server": "^5.7.3",
     "react": "^18",
+    "react-admin": "^5.7.3",
     "react-dom": "^18",
-    "next": "14.2.15"
+    "shadcn-ui": "^0.9.5",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@types/bcrypt": "^5.0.2",
+    "@types/formidable": "^3.4.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.0",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1"
+    "prisma": "^6.6.0",
+    "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5"
   }
 }
