@@ -8,7 +8,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "postinstall": "prisma generate",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "ts-node scripts/deploy-to-hostinger.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -20,9 +21,12 @@
     "@headlessui/react": "^2.2.2",
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.6.0",
+    "basic-ftp": "^5.0.5",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.6.0",
+    "dotenv": "^16.5.0",
     "formidable": "^3.5.4",
+    "ftp": "^0.3.10",
     "lucide-react": "^0.503.0",
     "multer": "^1.4.5-lts.2",
     "next": "^15.3.1",
@@ -37,6 +41,7 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/formidable": "^3.4.5",
+    "@types/ftp": "^0.3.36",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

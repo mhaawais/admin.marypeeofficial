@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
     const origin = request.headers.get("origin")
 
     // You can add more allowed origins as needed
-    const allowedOrigins = ["https://marypeeofficial.com", "https://www.marypeeofficial.com"]
+    const allowedOrigins = ["https://marypeeofficial.com", "www.marypeeofficial.com"]
 
     // Check if the request is from an allowed origin
     const isAllowedOrigin = allowedOrigins.includes(origin || "")
