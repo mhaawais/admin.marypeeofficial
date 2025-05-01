@@ -91,20 +91,22 @@ export default function SettingsPage() {
     setRebuildStatus("Triggering rebuild...")
 
     try {
+      // The issue is here - we're trying to use an environment variable client-side
+      // which isn't accessible. Let's fix this by not sending the secret directly.
       const res = await fetch("/api/trigger-rebuild", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          secret: process.env.REBUILD_SECRET,
-        }),
+        // Remove the secret from the client-side code
+        body: JSON.stringify({}),
       })
 
       if (res.ok) {
         setRebuildStatus("Rebuild triggered successfully! The website will be updated in a few minutes.")
       } else {
-        setRebuildStatus("Failed to trigger rebuild. Please try again or contact your developer.")
+        const errorData = await res.json()
+        setRebuildStatus(`Failed to trigger rebuild: ${errorData.error || "Unknown error"}`)
       }
     } catch (error) {
       console.error("Error triggering rebuild:", error)
@@ -181,7 +183,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* New section for website rebuild */}
+          {/* Website rebuild section */}
           <div className="bg-[#111] border border-gray-700 rounded-lg p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Website Rebuild</h2>
             <p className="text-gray-300 mb-6">
@@ -287,6 +289,8 @@ export default function SettingsPage() {
 
 
 
+
+
 // "use client"
 
 // import { useState, useEffect } from "react"
@@ -298,6 +302,8 @@ export default function SettingsPage() {
 //   const [copied, setCopied] = useState(false)
 //   const [generating, setGenerating] = useState(false)
 //   const [saved, setSaved] = useState(false)
+//   const [rebuilding, setRebuilding] = useState(false)
+//   const [rebuildStatus, setRebuildStatus] = useState("")
 
 //   useEffect(() => {
 //     // Fetch the current API key
@@ -369,6 +375,41 @@ export default function SettingsPage() {
 //     }
 //   }
 
+//   const triggerRebuild = async () => {
+//     if (!confirm("Are you sure you want to trigger a rebuild of the main website? This may take a few minutes.")) {
+//       return
+//     }
+
+//     setRebuilding(true)
+//     setRebuildStatus("Triggering rebuild...")
+
+//     try {
+//       const res = await fetch("/api/trigger-rebuild", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           secret: process.env.REBUILD_SECRET,
+//         }),
+//       })
+
+//       if (res.ok) {
+//         setRebuildStatus("Rebuild triggered successfully! The website will be updated in a few minutes.")
+//       } else {
+//         setRebuildStatus("Failed to trigger rebuild. Please try again or contact your developer.")
+//       }
+//     } catch (error) {
+//       console.error("Error triggering rebuild:", error)
+//       setRebuildStatus("Error triggering rebuild. Please try again or contact your developer.")
+//     } finally {
+//       setTimeout(() => {
+//         setRebuilding(false)
+//         setTimeout(() => setRebuildStatus(""), 5000)
+//       }, 2000)
+//     }
+//   }
+
 //   return (
 //     <div className="flex flex-col md:flex-row">
 //       <Sidebar />
@@ -430,6 +471,42 @@ export default function SettingsPage() {
 //                   {saved ? "Saved!" : "Save Settings"}
 //                 </button>
 //               </div>
+//             </div>
+//           </div>
+
+//           {/* New section for website rebuild */}
+//           <div className="bg-[#111] border border-gray-700 rounded-lg p-6 mb-6">
+//             <h2 className="text-xl font-semibold mb-4">Website Rebuild</h2>
+//             <p className="text-gray-300 mb-6">
+//               After making changes to your content, you need to rebuild your main website for the changes to appear.
+//               Click the button below to trigger a rebuild.
+//             </p>
+
+//             <div className="space-y-4">
+//               <button
+//                 onClick={triggerRebuild}
+//                 disabled={rebuilding}
+//                 className="flex items-center gap-2 px-4 py-2 bg-myred hover:bg-red-700 rounded text-white transition disabled:opacity-50"
+//               >
+//                 {rebuilding ? (
+//                   <>
+//                     <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+//                     Rebuilding...
+//                   </>
+//                 ) : (
+//                   <>
+//                     <RefreshCw className="w-4 h-4" /> Rebuild Website
+//                   </>
+//                 )}
+//               </button>
+
+//               {rebuildStatus && (
+//                 <div
+//                   className={`mt-4 p-3 rounded ${rebuildStatus.includes("successfully") ? "bg-green-900/30 border border-green-700" : "bg-yellow-900/30 border border-yellow-700"}`}
+//                 >
+//                   {rebuildStatus}
+//                 </div>
+//               )}
 //             </div>
 //           </div>
 
@@ -496,3 +573,4 @@ export default function SettingsPage() {
 //     </div>
 //   )
 // }
+
