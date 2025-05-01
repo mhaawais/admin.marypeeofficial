@@ -11,7 +11,7 @@ export async function POST(req: Request): Promise<Response> {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const outDir = path.join(process.cwd(), "public", "export");
+  const outDir = path.join(process.cwd(), "out");
   const ftp = new Client();
 
   return new Promise((resolve) => {

@@ -31,25 +31,30 @@ export default function SettingsPage() {
     if (!confirm("Are you sure you want to trigger a rebuild of the main website?")) return;
 
     setRebuilding(true);
-    setRebuildStatus("Triggering rebuild...");
+    setRebuildStatus("Triggering GitHub workflow...");
 
     try {
-      const res = await fetch("/api/rebuild", {
+      const res = await fetch("https://api.github.com/repos/mhaawais/admin.marypeeofficial/dispatches", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ secret: "rebuild-marypee-123" }), // ✅ uses correct secret
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          event_type: "rebuild-from-admin",
+        }),
       });
 
-      const data = await res.json();
-
       if (res.ok) {
-        setRebuildStatus("✅ Site successfully rebuilt and uploaded.");
+        setRebuildStatus("✅ GitHub Action triggered successfully. Website will rebuild shortly.");
       } else {
-        setRebuildStatus(`❌ Error: ${data.error || "Unknown error"}`);
+        const errData = await res.json();
+        setRebuildStatus(`❌ GitHub trigger failed: ${errData.message || res.statusText}`);
       }
     } catch (err) {
-      console.error("Rebuild error:", err);
-      setRebuildStatus("❌ Network or server error.");
+      console.error("GitHub trigger error:", err);
+      setRebuildStatus("❌ Network or GitHub error.");
     } finally {
       setTimeout(() => {
         setRebuilding(false);
@@ -67,7 +72,7 @@ export default function SettingsPage() {
           <div className="bg-[#111] border border-gray-700 rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Website Rebuild</h2>
             <p className="text-gray-300 mb-4">
-              Trigger a rebuild and FTP upload to Hostinger. This will export your static site and overwrite the current version.
+              Trigger a rebuild and auto-deploy to Hostinger via GitHub Actions.
             </p>
             <button
               onClick={triggerRebuild}
