@@ -40,3 +40,4 @@ site-export/.next/
 public/node_modules/
 
 
+public/site-export/node_modules/
