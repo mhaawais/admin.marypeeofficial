@@ -34,3 +34,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+site-export/node_modules/
+site-export/.next/
+site-export/out/
+
