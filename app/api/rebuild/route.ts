@@ -15,8 +15,16 @@ export async function POST(req: Request): Promise<Response> {
 
   return new Promise((resolve) => {
     ftp.on("ready", () => {
-      ftp.rmdir("public_html", true, () => {
-        ftp.mkdir("public_html", true, () => {
+      ftp.rmdir("public_html", true, (err) => {
+        if (err) {
+          return resolve(NextResponse.json({ error: "FTP rmdir failed: " + err.message }, { status: 500 }));
+        }
+
+        ftp.mkdir("public_html", true, (err) => {
+          if (err) {
+            return resolve(NextResponse.json({ error: "FTP mkdir failed: " + err.message }, { status: 500 }));
+          }
+
           uploadDirectory(ftp, outDir, "public_html");
         });
       });

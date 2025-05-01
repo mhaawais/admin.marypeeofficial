@@ -1,34 +1,31 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Sidebar from "@/components/sidebar"
-import { Copy, Check, RefreshCw } from "lucide-react"
+import { useState, useEffect } from "react";
+import Sidebar from "@/components/sidebar";
+import { RefreshCw } from "lucide-react";
 
 export default function SettingsPage() {
-  const [apiKey, setApiKey] = useState("")
-  const [copied, setCopied] = useState(false)
-  const [generating, setGenerating] = useState(false)
-  const [saved, setSaved] = useState(false)
-  const [rebuilding, setRebuilding] = useState(false)
-  const [rebuildStatus, setRebuildStatus] = useState("")
+  const [apiKey, setApiKey] = useState("");
+  const [rebuilding, setRebuilding] = useState(false);
+  const [rebuildStatus, setRebuildStatus] = useState("");
 
   useEffect(() => {
     const fetchApiKey = async () => {
       try {
-        const res = await fetch("/api/settings")
+        const res = await fetch("/api/settings");
         if (res.ok) {
-          const data = await res.json()
+          const data = await res.json();
           if (data.apiKey) {
-            setApiKey(data.apiKey)
+            setApiKey(data.apiKey);
           }
         }
       } catch (error) {
-        console.error("Error fetching API key:", error)
+        console.error("Error fetching API key:", error);
       }
-    }
+    };
 
-    fetchApiKey()
-  }, [])
+    fetchApiKey();
+  }, []);
 
   const triggerRebuild = async () => {
     if (!confirm("Are you sure you want to trigger a rebuild of the main website?")) return;
@@ -39,10 +36,8 @@ export default function SettingsPage() {
     try {
       const res = await fetch("/api/rebuild", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ secret: "rebuild-marypee-123" }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ secret: "rebuild-marypee-123" }), // ✅ corrected spelling
       });
 
       const data = await res.json();
@@ -61,16 +56,14 @@ export default function SettingsPage() {
         setTimeout(() => setRebuildStatus(""), 5000);
       }, 2000);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col md:flex-row">
       <Sidebar />
       <main className="w-full md:ml-64 p-4 md:p-8 min-h-screen bg-black text-white">
         <h1 className="text-3xl font-bold text-myred mb-6">API Settings</h1>
-
         <div className="max-w-2xl space-y-8">
-          {/* Rebuild Section */}
           <div className="bg-[#111] border border-gray-700 rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Website Rebuild</h2>
             <p className="text-gray-300 mb-4">
@@ -94,7 +87,13 @@ export default function SettingsPage() {
               )}
             </button>
             {rebuildStatus && (
-              <div className={`mt-4 p-3 rounded ${rebuildStatus.includes("✅") ? "bg-green-900/30 border border-green-700" : "bg-yellow-900/30 border border-yellow-700"}`}>
+              <div
+                className={`mt-4 p-3 rounded ${
+                  rebuildStatus.includes("✅")
+                    ? "bg-green-900/30 border border-green-700"
+                    : "bg-yellow-900/30 border border-yellow-700"
+                }`}
+              >
                 {rebuildStatus}
               </div>
             )}
@@ -102,5 +101,5 @@ export default function SettingsPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
