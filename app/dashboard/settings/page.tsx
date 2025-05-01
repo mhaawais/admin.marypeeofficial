@@ -81,35 +81,38 @@ export default function SettingsPage() {
     }
   }
 
+  
   const triggerRebuild = async () => {
-    if (!confirm("Are you sure you want to trigger a rebuild of the main website? This may take a few minutes.")) {
-      return
-    }
-
-    setRebuilding(true)
-    setRebuildStatus("Triggering rebuild...")
-
-    try {
-      const res = await fetch("https://marypeeofficial.com/rebuild.php?secret=rebuild-marypee-123", {
-        method: "GET",
-      })
-
-      if (res.ok) {
-        const text = await res.text()
-        setRebuildStatus(`✅ ${text}`)
-      } else {
-        setRebuildStatus("❌ Failed to trigger rebuild. Please try again.")
-      }
-    } catch (error) {
-      console.error("Error triggering rebuild:", error)
-      setRebuildStatus("❌ Error triggering rebuild. Please try again.")
-    } finally {
-      setTimeout(() => {
-        setRebuilding(false)
-        setTimeout(() => setRebuildStatus(""), 5000)
-      }, 2000)
-    }
+  if (!confirm("Are you sure you want to trigger a rebuild of the main website? This may take a few minutes.")) {
+    return;
   }
+
+  setRebuilding(true);
+  setRebuildStatus("Triggering rebuild...");
+
+  try {
+    const res = await fetch("https://marypeeofficial.com/rebuild.php?secret=rebuild-marypee-123", {
+      method: "GET",
+    });
+
+    const resultText = await res.text();
+
+    if (res.ok) {
+      setRebuildStatus(`✅ ${resultText}`);
+    } else {
+      setRebuildStatus(`❌ Rebuild failed: ${resultText}`);
+    }
+  } catch (error) {
+    console.error("Error triggering rebuild:", error);
+    setRebuildStatus("❌ Error triggering rebuild. Please try again.");
+  } finally {
+    setTimeout(() => {
+      setRebuilding(false);
+      setTimeout(() => setRebuildStatus(""), 5000);
+    }, 2000);
+  }
+};
+
 
   return (
     <div className="flex flex-col md:flex-row">
