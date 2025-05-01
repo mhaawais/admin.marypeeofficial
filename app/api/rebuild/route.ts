@@ -7,6 +7,7 @@ export async function POST(req: Request): Promise<Response> {
   const { secret } = await req.json();
 
   if (secret !== process.env.REBUILD_SECRET) {
+    console.error("Unauthorized access attempt to rebuild API.");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -17,11 +18,13 @@ export async function POST(req: Request): Promise<Response> {
     ftp.on("ready", () => {
       ftp.rmdir("public_html", true, (err) => {
         if (err) {
+          console.error("FTP rmdir error:", err);
           return resolve(NextResponse.json({ error: "FTP rmdir failed: " + err.message }, { status: 500 }));
         }
 
         ftp.mkdir("public_html", true, (err) => {
           if (err) {
+            console.error("FTP mkdir error:", err);
             return resolve(NextResponse.json({ error: "FTP mkdir failed: " + err.message }, { status: 500 }));
           }
 
@@ -31,22 +34,32 @@ export async function POST(req: Request): Promise<Response> {
     });
 
     ftp.on("end", () => {
+      console.log("✅ FTP upload completed.");
       resolve(NextResponse.json({ success: true, message: "Site uploaded successfully" }));
     });
 
     ftp.on("error", (err) => {
+      console.error("❌ FTP connection or transfer error:", err);
       resolve(NextResponse.json({ error: "FTP Error: " + err.message }, { status: 500 }));
     });
 
-    ftp.connect({
-      host: process.env.FTP_HOST!,
-      user: process.env.FTP_USER!,
-      password: process.env.FTP_PASSWORD!,
-    });
+    try {
+      ftp.connect({
+        host: process.env.FTP_HOST!,
+        user: process.env.FTP_USER!,
+        password: process.env.FTP_PASSWORD!,
+      });
+    } catch (err: any) {
+      console.error("❌ FTP connection setup failed:", err);
+      return resolve(NextResponse.json({ error: "FTP setup error" }, { status: 500 }));
+    }
 
     function uploadDirectory(ftp: Client, localDir: string, remoteDir: string) {
       fs.readdir(localDir, (err, files) => {
-        if (err) return console.error("Read dir error:", err);
+        if (err) {
+          console.error("Read dir error:", err);
+          return;
+        }
         files.forEach((file) => {
           const localPath = path.join(localDir, file);
           const remotePath = `${remoteDir}/${file}`;

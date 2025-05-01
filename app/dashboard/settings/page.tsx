@@ -37,7 +37,7 @@ export default function SettingsPage() {
       const res = await fetch("/api/rebuild", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ secret: "rebuild-marypee-123" }), // ✅ corrected spelling
+        body: JSON.stringify({ secret: "rebuild-marypee-123" }), // ✅ uses correct secret
       });
 
       const data = await res.json();
