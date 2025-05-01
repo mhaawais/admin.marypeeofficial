@@ -1,81 +1,37 @@
 import { NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
-import Client from "ftp";
 
 export async function POST(req: Request): Promise<Response> {
-  const { secret } = await req.json();
+  try {
+    const { secret } = await req.json();
 
-  if (secret !== process.env.REBUILD_SECRET) {
-    console.error("Unauthorized access attempt to rebuild API.");
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (secret !== process.env.REBUILD_SECRET) {
+      console.error("❌ Unauthorized access attempt.");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // ✅ STEP 1: Confirm API is working
+    console.log("✅ API route reached. Secret is valid.");
+
+    // ✅ STEP 2: Check if outDir exists
+    const outDir = path.join(process.cwd(), "site-export", "out");
+    console.log("🔍 Checking directory:", outDir);
+
+    if (!fs.existsSync(outDir)) {
+      console.error("❌ site-export/out folder is missing.");
+      return NextResponse.json({ error: "Static export folder not found at 'site-export/out'" }, { status: 500 });
+    }
+
+    const files = fs.readdirSync(outDir);
+    console.log("📦 Exported files:", files);
+
+    return NextResponse.json({
+      success: true,
+      message: `API reached, folder found with ${files.length} items.`,
+    });
+  } catch (err: any) {
+    console.error("❌ Unexpected error in /api/rebuild:", err);
+    return NextResponse.json({ error: "Unexpected server error" }, { status: 500 });
   }
-
-  const outDir = path.join(process.cwd(), "site-export", "out");
-  const ftp = new Client();
-
-  return new Promise((resolve) => {
-    ftp.on("ready", () => {
-      ftp.rmdir("public_html", true, (err) => {
-        if (err) {
-          console.error("FTP rmdir error:", err);
-          return resolve(NextResponse.json({ error: "FTP rmdir failed: " + err.message }, { status: 500 }));
-        }
-
-        ftp.mkdir("public_html", true, (err) => {
-          if (err) {
-            console.error("FTP mkdir error:", err);
-            return resolve(NextResponse.json({ error: "FTP mkdir failed: " + err.message }, { status: 500 }));
-          }
-
-          uploadDirectory(ftp, outDir, "public_html");
-        });
-      });
-    });
-
-    ftp.on("end", () => {
-      console.log("✅ FTP upload completed.");
-      resolve(NextResponse.json({ success: true, message: "Site uploaded successfully" }));
-    });
-
-    ftp.on("error", (err) => {
-      console.error("❌ FTP connection or transfer error:", err);
-      resolve(NextResponse.json({ error: "FTP Error: " + err.message }, { status: 500 }));
-    });
-
-    try {
-      ftp.connect({
-        host: process.env.FTP_HOST!,
-        user: process.env.FTP_USER!,
-        password: process.env.FTP_PASSWORD!,
-      });
-    } catch (err: any) {
-      console.error("❌ FTP connection setup failed:", err);
-      return resolve(NextResponse.json({ error: "FTP setup error" }, { status: 500 }));
-    }
-
-    function uploadDirectory(ftp: Client, localDir: string, remoteDir: string) {
-      fs.readdir(localDir, (err, files) => {
-        if (err) {
-          console.error("Read dir error:", err);
-          return;
-        }
-        files.forEach((file) => {
-          const localPath = path.join(localDir, file);
-          const remotePath = `${remoteDir}/${file}`;
-          fs.stat(localPath, (err, stats) => {
-            if (stats?.isDirectory()) {
-              ftp.mkdir(remotePath, true, () => {
-                uploadDirectory(ftp, localPath, remotePath);
-              });
-            } else {
-              ftp.put(localPath, remotePath, (err) => {
-                if (err) console.error("Upload error:", err);
-              });
-            }
-          });
-        });
-      });
-    }
-  });
 }

@@ -12,7 +12,7 @@ export default function HomePage() {
         <Link
           href="/login"
           className="px-6 py-3 bg-myred text-white rounded-md shadow hover:bg-red-700 transition text-center"
-        >
+        > 
           Login to Admin Panel
         </Link>
         <Link
