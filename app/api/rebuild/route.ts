@@ -15,16 +15,20 @@ export async function POST(req: Request): Promise<Response> {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const outDir = path.join(process.cwd(), "out");
+    const exportDir = path.join(process.cwd(), "site-export");
 
-    // Step 1: Export static site
-    await execAsync("npm run export");
+    // Step 1: Install + Export the static site
+    await execAsync("npm install", { cwd: exportDir });
+    await execAsync("npm run export", { cwd: exportDir });
 
-    // Step 2: Connect via FTP
+    const outDir = path.join(exportDir, "out");
+
+    // Step 2: FTP Upload to Hostinger
     const ftp = new Client();
 
     return new Promise((resolve) => {
       ftp.on("ready", () => {
+        // Clean and recreate remote directory
         ftp.rmdir("public_html", true, () => {
           ftp.mkdir("public_html", true, () => {
             uploadDirectory(ftp, outDir, "public_html");
@@ -33,7 +37,7 @@ export async function POST(req: Request): Promise<Response> {
       });
 
       ftp.on("end", () => {
-        resolve(NextResponse.json({ success: true, message: "Site rebuilt and uploaded via FTP." }));
+        resolve(NextResponse.json({ success: true, message: "Site uploaded successfully" }));
       });
 
       ftp.on("error", (err) => {
@@ -68,11 +72,10 @@ export async function POST(req: Request): Promise<Response> {
       }
     });
   } catch (error) {
-    console.error("Rebuild route error:", error);
+    console.error("Rebuild error:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unknown server error" },
+      { error: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }
 }
-
