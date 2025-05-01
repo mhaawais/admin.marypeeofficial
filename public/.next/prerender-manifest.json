@@ -1,0 +1,51 @@
+{
+  "version": 4,
+  "routes": {
+    "/profile": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/BKJzhgTIIuYhd3YH2BCgz/profile.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/blogs": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/BKJzhgTIIuYhd3YH2BCgz/blogs.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/BKJzhgTIIuYhd3YH2BCgz/index.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    }
+  },
+  "dynamicRoutes": {},
+  "notFoundRoutes": [],
+  "preview": {
+    "previewModeId": "959731bcbf15ebef93c18696ce1dcbd4",
+    "previewModeSigningKey": "95e614b3080d77fc5500b22ce2b4cecc60552366755229b601c946f805680d64",
+    "previewModeEncryptionKey": "21b75402c9aa99895c9c7d00dd10d37dbda232b978f6a6a02dd620ed814aa40d"
+  }
+}
