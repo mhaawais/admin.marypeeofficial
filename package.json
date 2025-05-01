@@ -9,7 +9,8 @@
     "start": "next start",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "deploy": "ts-node scripts/deploy-to-hostinger.ts"
+    "deploy": "ts-node scripts/deploy-to-hostinger.ts",
+    "export": "next export" 
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
