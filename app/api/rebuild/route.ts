@@ -1,3 +1,4 @@
+// app/api/rebuild/route.ts
 import { NextResponse } from "next/server";
 
 export async function POST() {
@@ -5,7 +6,7 @@ export async function POST() {
     method: "POST",
     headers: {
       Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`, // ✅ Use server env var
+      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
