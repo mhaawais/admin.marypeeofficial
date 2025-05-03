@@ -1,36 +1,27 @@
 // app/dashboard/settings/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function SettingsPage() {
   const [status, setStatus] = useState("");
 
-  const handleRebuild = async () => {
-    setStatus("Rebuilding...");
-    const res = await fetch("/api/rebuild", {
-      method: "POST",
-    });
-
-    if (res.ok) {
-      setStatus("✅ Rebuild triggered successfully.");
-    } else {
-      const data = await res.json();
-      setStatus(`❌ Failed: ${data?.error?.message || "Unknown error"}`);
-    }
-  };
+  useEffect(() => {
+    setStatus("✅ Your website updates instantly. No rebuild needed.");
+  }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Website Rebuild</h1>
-      <p className="mb-4">Click the button below to rebuild the main site.</p>
-      <button
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        onClick={handleRebuild}
-      >
-        Rebuild Website
-      </button>
-      {status && <p className="mt-4">{status}</p>}
+    <div className="p-6 max-w-2xl mx-auto">
+      <h1 className="text-3xl font-bold mb-4">Website Settings</h1>
+      <p className="text-lg mb-6">
+        This website uses <strong>Server-Side Rendering (SSR)</strong>, so any
+        content updates you make from this admin panel are reflected live on the
+        public website instantly.
+      </p>
+
+      <div className="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md">
+        {status}
+      </div>
     </div>
   );
 }
